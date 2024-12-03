@@ -2,7 +2,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package com.mycompany.rentalcar;
+package rencar;
+
+import conected.conect;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -15,6 +20,52 @@ public class Stok extends javax.swing.JFrame {
      */
     public Stok() {
         initComponents();
+        load_table();
+    }
+    private void load_table() {
+        DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("No Polisi");
+        model.addColumn("Nama Mobil");
+        model.addColumn("Harga");
+        model.addColumn("Stok"); // Tambahkan kolom sesuai tabel database
+
+        java.sql.Connection conn = null;
+        java.sql.Statement stm = null;
+        java.sql.ResultSet rslt = null;
+
+        try {
+            // Kueri SQL untuk mengambil semua data dari tabel stok_barang
+            String sql = "SELECT * FROM mobil";
+            conn = conect.configDB(); // Menghubungkan ke database
+            stm = conn.createStatement();
+            rslt = stm.executeQuery(sql);
+        
+            // Iterasi data hasil query dan menambahkannya ke model tabel
+        while (rslt.next()) {
+            model.addRow(new Object[]{
+                rslt.getString("no_pol"),   // Ganti dengan nama kolom yang sesuai
+                rslt.getString("nama_mobil"),   // Nama barang
+                rslt.getInt("harga_per_hari"),             // Stok
+                rslt.getString("stok")      // Deskripsi (tambahkan jika ada)
+                });
+            }
+
+            // Mengatur model ke tabel
+            tblstok.setModel(model);
+
+        } catch (Exception e) {
+            // Menangani error dan menampilkan pesan
+            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
+        } finally {
+            try {
+                // Pastikan koneksi dan statement ditutup setelah digunakan
+                if (rslt != null) rslt.close();
+                if (stm != null) stm.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, "Error closing resources: " + e.getMessage());
+                }
+        }
     }
 
     /**
@@ -28,25 +79,25 @@ public class Stok extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblstok = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setText("Cari");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblstok.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Type", "Ketersediaan", "Harga"
+                "No Polisi", "Merek", "Harga", "Stok"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tblstok);
 
         jButton1.setText("Tambah Stok");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -131,6 +182,6 @@ public class Stok extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JTable tblstok;
     // End of variables declaration//GEN-END:variables
 }
