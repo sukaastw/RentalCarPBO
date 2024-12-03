@@ -11,7 +11,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class Config {
+public class conect {
     private static Connection mysqlconfig;
 
     public static Connection configDB() throws SQLException {

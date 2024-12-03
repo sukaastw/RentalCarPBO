@@ -32,7 +32,7 @@ public class Login extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setText("RentallCar");
+        jLabel1.setText("RentallCar verdy jomok");
 
         jTextField1.setText("USERNAME");
 
