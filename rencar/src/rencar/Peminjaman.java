@@ -2,7 +2,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package com.mycompany.rentalcar;
+package rencar;
+
+import conected.conect;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -15,6 +20,52 @@ public class Peminjaman extends javax.swing.JFrame {
      */
     public Peminjaman() {
         initComponents();
+        load_table();
+    }
+     private void load_table() {
+        DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("No Polisi");
+        model.addColumn("Nama Mobil");
+        model.addColumn("Harga");
+        model.addColumn("Stok");
+
+        java.sql.Connection conn = null;
+        java.sql.Statement stm = null;
+        java.sql.ResultSet rslt = null;
+
+        try {
+            // Kueri SQL untuk mengambil semua data dari tabel stok_barang
+            String sql = "SELECT * FROM mobil";
+            conn = conect.configDB(); // Menghubungkan ke database
+            stm = conn.createStatement();
+            rslt = stm.executeQuery(sql);
+        
+            // Iterasi data hasil query dan menambahkannya ke model tabel
+        while (rslt.next()) {
+            model.addRow(new Object[]{
+                rslt.getString("no_pol"),   // Ganti dengan nama kolom yang sesuai
+                rslt.getString("nama_mobil"),   // Nama barang
+                rslt.getInt("harga_per_hari"),
+                rslt.getInt("Stok")// Stok
+                });
+            }
+
+            // Mengatur model ke tabel
+            tblpinjm.setModel(model);
+
+        } catch (Exception e) {
+            // Menangani error dan menampilkan pesan
+            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
+        } finally {
+            try {
+                // Pastikan koneksi dan statement ditutup setelah digunakan
+                if (rslt != null) rslt.close();
+                if (stm != null) stm.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, "Error closing resources: " + e.getMessage());
+                }
+        }
     }
 
     /**
@@ -32,7 +83,7 @@ public class Peminjaman extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblpinjm = new javax.swing.JTable();
         jTextField1 = new javax.swing.JTextField();
         jTextField2 = new javax.swing.JTextField();
         jTextField3 = new javax.swing.JTextField();
@@ -57,18 +108,18 @@ public class Peminjaman extends javax.swing.JFrame {
 
         jLabel5.setText("No Hp");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblpinjm.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Jenis", "Harga"
+                "No Polisi", "Nama Mobil", "Harga", "Stok"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tblpinjm);
 
         jTextField4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -76,7 +127,7 @@ public class Peminjaman extends javax.swing.JFrame {
             }
         });
 
-        jLabel6.setText("Jenis Mobil");
+        jLabel6.setText("No Polisi");
 
         jLabel7.setText("Harga");
 
@@ -236,7 +287,6 @@ public class Peminjaman extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
@@ -244,5 +294,6 @@ public class Peminjaman extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField6;
     private javax.swing.JTextField jTextField7;
+    private javax.swing.JTable tblpinjm;
     // End of variables declaration//GEN-END:variables
 }
